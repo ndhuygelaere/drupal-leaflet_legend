@@ -18,6 +18,7 @@ function  leaflet_legend_leaflet_map_info(){
           return ($a['weight'] < $b['weight']) ? -1 : 1;
         });
         $enable_legend = false;
+        
         foreach ($layers as $layer) {
             if ($layer['module'] == 'leaflet_layers') {
                 $layerEntity = MapLayer::load($layer['layer_id']);
@@ -28,15 +29,9 @@ function  leaflet_legend_leaflet_map_info(){
                   $layer_name = $layer['label'];
                 }
                 if($settings['plugin_type'] =='wms'){
-                    /*
-                    {
-                        label: "Marker1",
-                        type: "image",
-                        url: "marker/marker-red.png",
-                    }
-                    */ 
                     $enable_legend = true;
                     $hook_data[$bundle->id()]['layers'][$layer_name]['legend'] = [
+                        'id'=>$layer['layer_id'],
                         'label'=>$layer_name,
                         'type'=>'image',
                         'url'=>\Drupal\Core\Url::fromUri($layerEntity->getUrlTemplate(), [
@@ -53,12 +48,12 @@ function  leaflet_legend_leaflet_map_info(){
                         
                     ];
                 }
+                //TMS layer doesn't  have a legend capability ? 
+                //elseif($settings['plugin_type'] =='tilelayer'){}
                
             }
         }
-        if($enable_legend){
-            $hook_data[$bundle->id()]['settings']['legendControl'] = true;
-        }
+        $hook_data[$bundle->id()]['settings']['legendControl'] = $enable_legend;
     }
     return $hook_data;
 }

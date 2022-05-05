@@ -5,4 +5,4 @@ core: 8.x
 core_version_requirement: ^8 || ^9
 package: 'Geofield'
 dependencies:
-  - leaflet:leaflet
+  - leaflet_layers:leaflet_layers
