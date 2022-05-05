@@ -1,0 +1,66 @@
+<?php 
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\leaflet_layers\Entity\MapBundle;
+use Drupal\leaflet_layers\Entity\MapLayer;
+use Drupal\Component\Plugin\Exception\PluginException;
+
+function  leaflet_legend_leaflet_map_info(){
+    $bundles = MapBundle::loadMultiple();
+    $hook_data = [];
+    
+    foreach ($bundles as $bundle) {
+        $layers = $bundle->getLayers();
+        uasort($layers, function ($a, $b) {
+        if ($a['weight'] == $b['weight']) {
+            return 0;
+          }
+          return ($a['weight'] < $b['weight']) ? -1 : 1;
+        });
+        $enable_legend = false;
+        foreach ($layers as $layer) {
+            if ($layer['module'] == 'leaflet_layers') {
+                $layerEntity = MapLayer::load($layer['layer_id']);
+                $settings = $layerEntity->getSettings();
+                //dpm($settings);
+                $layer_name = $layerEntity->label();
+                if ($layer['label'] !== '') {
+                  $layer_name = $layer['label'];
+                }
+                if($settings['plugin_type'] =='wms'){
+                    /*
+                    {
+                        label: "Marker1",
+                        type: "image",
+                        url: "marker/marker-red.png",
+                    }
+                    */ 
+                    $enable_legend = true;
+                    $hook_data[$bundle->id()]['layers'][$layer_name]['legend'] = [
+                        'label'=>$layer_name,
+                        'type'=>'image',
+                        'url'=>\Drupal\Core\Url::fromUri($layerEntity->getUrlTemplate(), [
+                          'query'=>[
+                            'service'=>'WMS',
+                            'version'=>$settings['version'],
+                            'request'=>'GetLegendGraphic',
+                            'layer'=>$settings['layers'],
+                            'format'=>$settings['format'],
+                            //'sld_version'=1.1.0
+                            //'STYLE'=default
+                          ]
+                        ])->toString()
+                        
+                    ];
+                }
+               
+            }
+        }
+        if($enable_legend){
+            $hook_data[$bundle->id()]['settings']['legendControl'] = true;
+        }
+    }
+    return $hook_data;
+}
+
+

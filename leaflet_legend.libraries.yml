@@ -1,0 +1,20 @@
+leaflet-legend:
+  remote: https://github.com/ptma/Leaflet.Legend
+  license:
+    name: MIT-License
+    url: https://github.com/ptma/Leaflet.Legend/blob/master/LICENSE
+    gpl-compatible: true
+  js:
+    Leaflet.Legend/src/leaflet.legend.js: {}
+  css:
+    component:
+      Leaflet.Legend/src/leaflet.legend.css: {}
+  dependencies:
+    - leaflet/leaflet
+
+leaflet-legend-drupal:
+  version: VERSION
+  js:
+    leaflet_legend.drupal.js: {}
+  dependencies:
+    - leaflet/leaflet-drupal
