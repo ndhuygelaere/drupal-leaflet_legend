@@ -2,7 +2,7 @@ name: 'Leaflet Legend'
 type: module
 description: 'Provide layer legend feature for Leaflet'
 core: 8.x
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8 || ^9 || ^10
 package: 'Geofield'
 dependencies:
   - leaflet_layers:leaflet_layers
